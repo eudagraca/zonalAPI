@@ -1,0 +1,28 @@
+*{
+    font-family: 'Nunito Sans', sans-serif;
+}
+.container{
+    margin: 5%;
+}
+
+.form-cat{
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.btn-register {
+    color: white !important;
+    background-color: #3a3a3a;
+    border-color: #3a3a3a;
+}
+
+.btn-register:hover {
+  background-color: white;
+  color: #000000 !important;
+  border-color: #000000;
+}
+
+#blah{
+    max-width: 30% !important;
+    min-width: 20% !important;
+}

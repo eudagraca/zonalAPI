@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Zonal</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <link rel="stylesheet" th:href="@{/css/uikit.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<nav class="uk-navbar-container uk-margin" uk-navbar style="background: #000; color: #fff">
+    <div class="uk-navbar-left">
+
+        <a class="uk-navbar-item uk-logo" style="color: #fff" href="#">Zonal</a>
+
+        <ul class="uk-navbar-nav">
+            <li>
+                <a class="uk-text-normal" style="color: #fff" th:href="@{/rest/v01/categories/admin/create}">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: album"></span>
+                    Categorias
+                </a>
+            </li>
+        </ul>
+        <ul class="uk-navbar-nav">
+            <li>
+                <a class="uk-text-normal"  style="color: #fff" th:href="@{/rest/v01/currency/admin/create}">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: tag"></span>
+                    Moedas
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</nav>
+
+<div class="container">
+
+    <form class="uk-margin-large form-cat" th:action="@{/rest/v01/currency/admin/save}" method="post">
+        <fieldset class="uk-fieldset">
+
+            <legend class="uk-legend uk-margin-bottom">Adicionar Moeda</legend>
+            <div class="uk-margin">
+                <div class="uk-inline uk-width-1-1">
+                    <a class="uk-form-icon" uk-icon="icon: tag"></a>
+                    <input class="uk-input" name="code" type="text" placeholder="Simbolo da Moeda">
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <div class="uk-inline uk-width-1-1">
+                    <a class="uk-form-icon" uk-icon="icon: world"></a>
+                    <input class="uk-input" name="currency" type="text" placeholder="Nome da moeda">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <div class="uk-inline uk-width-1-1">
+                    <a class="uk-form-icon" uk-icon="icon: world"></a>
+                    <input class="uk-input" name="region_country" type="text" placeholder="País ou Região">
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <button class="btn btn-success uk-align-right my-2 my-sm-0 uk-margin btn-register"
+                        style="color:aliceblue">Adicionar
+                </button>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+
+</body>
+
+<script th:src="@{/js/uikit.min.js}"></script>
+<script th:src="@{/js/uikit-icons.min.js}"></script>
+</html>
