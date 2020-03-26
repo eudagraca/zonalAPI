@@ -1,25 +1,28 @@
 package mz.co.zonal.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
-import java.util.HashSet;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Brand {
+public class Brand implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy="brand", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private Set<Product> products;
 
-    public Brand(String name, Category category) {
+    public Brand() {
+    }
+
+    public Brand(String name) {
         this.name = name;
-        this.category = category;
     }
 
     public Long getId() {
@@ -30,14 +33,6 @@ public class Brand {
         this.id = id;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public String getName() {
         return name;
     }
@@ -46,11 +41,4 @@ public class Brand {
         this.name = name;
     }
 
-    public Category getCategories() {
-        return category;
-    }
-
-    public void setCategories(Category category) {
-        this.category = category;
-    }
 }

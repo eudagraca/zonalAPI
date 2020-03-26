@@ -23,18 +23,20 @@ public class CurrencyController {
 
     @GetMapping("admin/create")
     private ModelAndView form(){
-        return new ModelAndView("currency/create");
+        ModelAndView mav = new ModelAndView("currency/create");
+        mav.addObject("currencies", currencyService.allCurrency());
+        return mav;
     }
 
     @PostMapping(value = "admin/save")
     private Currency save(@Valid @RequestParam("code") String code,
                           @Valid @RequestParam("region_country") String region_country,
-                          @Valid @RequestParam("currency") String currency ){
-        var c = new Currency();
-        c.setCode(code);
-        c.setRegion_country(region_country);
-        c.setCurrency(currency);
-        return currencyService.save(c);
+                          @Valid @RequestParam("currency") String currencyName ){
+        var currency = new Currency();
+        currency.setCode(code);
+        currency.setRegion_country(region_country);
+        currency.setCurrency(currencyName);
+        return currencyService.save(currency);
     }
 
     @GetMapping(path = "{id}")

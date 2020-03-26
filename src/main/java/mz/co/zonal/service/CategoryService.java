@@ -14,12 +14,11 @@ public class CategoryService implements CategoryServiceImpl {
     private CategoryRepository categoryRepository;
 
     @Override
-    public boolean saveCategory(Category category) {
+    public Category save(Category category) {
         try {
-            categoryRepository.save(category);
-            return true;
+            return categoryRepository.save(category);
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
@@ -30,7 +29,7 @@ public class CategoryService implements CategoryServiceImpl {
 
     @Override
     public Category findCategory(Long id) {
-        return null;
+        return categoryRepository.findCategoryById(id);
     }
 
     @Override

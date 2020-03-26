@@ -2,7 +2,8 @@
     font-family: 'Nunito Sans', sans-serif;
 }
 .container{
-    margin: 5%;
+    margin-top: 5%;
+    margin-start: 2%;
 }
 
 .form-cat{
@@ -26,3 +27,22 @@
     max-width: 30% !important;
     min-width: 20% !important;
 }
+
+.btn-group{
+    width: 100% !important;
+}
+
+.btn-group > .btn:first-child {
+   border: 1px solid #80808029;
+   width: 100% !important;
+   background: white;
+   text-align: left;
+   margin-left: 0;
+   border-radius: 0px;
+}
+
+
+.btn-group{
+    width: 100%
+}
+

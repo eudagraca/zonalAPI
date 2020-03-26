@@ -1,7 +1,6 @@
 package mz.co.zonal.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,6 @@ import java.util.List;
 
 @Entity
 public class User implements UserDetails, Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,20 +37,39 @@ public class User implements UserDetails, Serializable {
     private String picPath;
     @Nullable
     private String token;
+    private String city;
+    private String province;
+    private String country;
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(
             name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private List<Role> roles;
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE,
             mappedBy = "user")
-//    @JsonIgnore
-    private Product product;
-    @OneToOne(fetch = FetchType.LAZY,
-    cascade = CascadeType.ALL,
+    @JsonIgnore
+    private List<Product> product;
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
     mappedBy = "user")
-    private View view;
+    @JsonIgnore
+    private List<View> view;
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+    mappedBy = "sender")
+    @JsonIgnore
+    private List<Message> messagesSender;
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            mappedBy = "receiver")
+    @JsonIgnore
+    private List<Message> messagesReceiver;
+    private Double latitude;
+    private Double longitude;
+    @OneToMany(
+            mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<ProductLikes> productLikes;
 
     public User() {
         super();
@@ -64,6 +81,11 @@ public class User implements UserDetails, Serializable {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
+    }
+
+    public User(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Long getId() {
@@ -114,11 +136,11 @@ public class User implements UserDetails, Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public View getView() {
+    public List<View> getView() {
         return view;
     }
 
-    public void setView(View view) {
+    public void setView(List<View> view) {
         this.view = view;
     }
 
@@ -172,11 +194,59 @@ public class User implements UserDetails, Serializable {
         this.roles = roles;
     }
 
-    public Product getProduct() {
+    public List<Product> getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(List<Product> product) {
         this.product = product;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public List<ProductLikes> getProductLikes() {
+        return productLikes;
+    }
+
+    public void setProductLikes(List<ProductLikes> productLikes) {
+        this.productLikes = productLikes;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

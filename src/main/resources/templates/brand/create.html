@@ -38,11 +38,13 @@
         });
     });
 
+
     </script>
     <style type="text/css">
     .multiselect-container {
         width: 100% !important;
     }
+
 
     </style>
 </head>
@@ -91,78 +93,49 @@
 <div class="container" uk-grid>
 
     <div class="uk-width-expand@m">
-        <form th:action="@{/rest/v01/categories/admin/save}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/rest/v01/brands/admin/save}" method="post">
             <fieldset class="uk-fieldset">
 
-                <legend class="uk-legend uk-margin-bottom uk-text-bolder uk-text-muted">Adicionar Categoria</legend>
+                <legend class="uk-legend uk-margin-bottom uk-text-bolder uk-text-muted">Adicionar Marca
+                </legend>
                 <div>
                     <div class="uk-inline uk-width-1-1">
                         <a class="uk-form-icon" uk-icon="icon: pencil"></a>
-                        <input class="uk-input" name="name" type="text" placeholder="Categoria">
+                        <input class="uk-input" name="name" type="text" placeholder="Nome da marca">
                     </div>
                 </div>
 
                 <div class="uk-margin">
-                    <div uk-form-custom="target: true">
-                        <input class="uk-input uk-width-1-1" type="file" accept="image/*" name="imagePath" id="imgInp" />
-                        <input class="uk-input uk-width-1-1" type="text" placeholder="Seleccione a imagem" disabled>
-                    </div>
-
-                    <button type="submit" class="btn btn-success uk-align-right my-2 my-sm-0 uk-margin btn-register"
+                    <button class="btn btn-success uk-align-right my-2 my-sm-0 uk-margin btn-register"
                             style="color:aliceblue">Adicionar
                     </button>
                 </div>
-
-                <div class="uk-margin">
-                    <img id="blah" src="https://static.thenounproject.com/png/1174579-200.png" th:src="@{https://static.thenounproject.com/png/1174579-200.png}" alt="your image"  style="max-width: 30% !important" />
-                </div>
-
             </fieldset>
         </form>
     </div>
 
-
-
     <div class="uk-width-1-3@m">
-    <legend class="uk-legend uk-margin-bottom uk-text-bolder uk-text-muted">Categorias</legend>
+        <legend class="uk-legend uk-margin-bottom uk-text-bolder uk-text-muted">Lista de Marcas</legend>
 
-    <div class="uk-child-width-1-2@s uk-box-shadow-remove">
-        <th:block th:each="category : ${categories}">
-
+        <div class="uk-child-width-1-2@s uk-box-shadow-remove">
+            <th:block th:each="brand : ${brands}">
                 <div class="uk-card uk-width-1-1 uk-card-default uk-card-body uk-margin-bottom">
-
                     <div class="uk-width-auto">
-                        <input th:value="${category.id}" name="id" type="hidden">
-                        <img class="uk-border-circle" width="40" height="40" th:src="@{${category.imagePath}}"
-                             src="@{${category.imagePath}}">
+                        <input th:value="${brand.id}" name="id" type="hidden">
                     </div>
-                    <label class="uk-text-bold uk-text-warning"  th:text="${category.name}"></label>
+                    <label class="uk-text-bold uk-text-warning" th:text="${brand.name}"></label>
                 </div>
-        </th:block>
+            </th:block>
+        </div>
     </div>
-    </div>
-
 </div>
-
 </body>
 
 <script th:src="@{/js/uikit.min.js}"></script>
 <script th:src="@{/js/uikit-icons.min.js}"></script>
 <script>
-function readURL(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+  $('select').selectpicker();
 
-        reader.onload = function (e) {
-            $('#blah').attr('src', e.target.result);
-        }
 
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-$("#imgInp").change(function(){
-    readURL(this);
-});
 </script>
 </html>

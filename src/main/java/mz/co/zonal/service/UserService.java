@@ -8,43 +8,42 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 public class UserService implements UserServiceImpl {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
 
     @Override
     public ArrayList<User> allUsers() {
-        return new ArrayList<>(userRepository.findAll());
+        return new ArrayList<>(repository.findAll());
     }
 
     @Override
-    public Optional<User> userByID(Long id) {
-        return userRepository.findById(id);
+    public User userByID(Long id) {
+        return repository.findUserById(id);
     }
 
     @Override
     public User signUp(@Valid User user) {
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     @Override
     public boolean deleteUser(Long id) {
-        var user = userRepository.getOne(id);
-        userRepository.delete(user);
+        var user = repository.getOne(id);
+        repository.delete(user);
         return user.getEmail() != null;
     }
 
     @Override
     public boolean updateUser(User user) {
         try {
-            userRepository.save(user);
+            repository.save(user);
             return true;
         } catch (Exception e) {
             return false;
@@ -52,17 +51,10 @@ public class UserService implements UserServiceImpl {
     }
 
     @Override
-    public User getOne(Long id) {
-        return userRepository.getOne(id);
-    }
-
-    @Override
     public boolean updateImage(String path, Long id) {
-        var user = userRepository.getOne(id);
-        if (user.getEmail() != null || userRepository.existsById(id)) {
-            user.setPicPath(path);
-            userRepository.save(user);
-            System.out.println("--------  " + path);
+        var user = repository.getOne(id);
+        if (user.getEmail() != null || repository.existsById(id)) {
+            repository.setImageUrl(path, id);
             return true;
         } else {
             return false;
@@ -71,7 +63,7 @@ public class UserService implements UserServiceImpl {
 
     @Override
     public User login(User user) {
-        User userInDataBase = userRepository.findByEmail(user.getEmail());
+        User userInDataBase = repository.findByEmail(user.getEmail());
 
         if (user == null || userInDataBase == null) {
             return null;
@@ -80,5 +72,20 @@ public class UserService implements UserServiceImpl {
         return userInDataBase.getEmail().equals(user.getEmail())
                 && userInDataBase.getPassword().equals(user.getPassword())
                 ? userInDataBase : null;
+    }
+
+    @Override
+    public User setLatAndLong(User user) {
+        repository.setLatAndLong(user.getLatitude(),
+                user.getLongitude(), user.getProvince(), user.getCountry(),
+                user.getCity(), user.getId());
+
+        return repository.findUserById(user.getId());
+    }
+
+    @Override
+    public User setToken(User user) {
+        repository.setToken(user.getToken(), user.getId());
+        return repository.findUserById(user.getId());
     }
 }

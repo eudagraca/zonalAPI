@@ -1,8 +1,9 @@
 package mz.co.zonal.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,30 +24,43 @@ public class Product implements Serializable {
     private String description;
     @NotNull
     private double price;
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-//    @JsonBackReference
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne
     private Category category;
-    private boolean isSealed;
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "currency_id", nullable = false)
+    private boolean sold;
+    @ManyToOne
     private Currency currency;
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @CreatedBy
     private User user;
     @Nullable
     @OneToMany(mappedBy = "product",
-            cascade = CascadeType.ALL, orphanRemoval = true)
+            cascade = CascadeType.REMOVE)
     private List<Images> images;
     private Date createdDate = new Date();
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
+    @OneToMany(fetch = FetchType.EAGER,
+            cascade = CascadeType.REMOVE,
             mappedBy = "product")
-    private View view;
-    @OneToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+    private List<View> view;
+    @Nullable
+    @OneToMany(cascade = CascadeType.REMOVE,
+            mappedBy = "product")
+    private List<Message> messages;
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name="type_id")
     private Type type;
     private Long viewCount;
+    @ManyToOne
+    @JoinColumn(name="brand_id")
+    private Brand brand;
+    @Nullable
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.REMOVE)
+    private List<ProductLikes> productLikes;
+    @Nullable
+    @Column
+    @ElementCollection(targetClass=byte.class)
+    private List<byte[]> imagesByte;
+    private Long likesCount;
 
     public Product() {
     }
@@ -60,9 +75,9 @@ public class Product implements Serializable {
         this.category = category;
         this.currency = currency;
         this.user = user;
-//        this.images = images;
         this.type = type;
-        this.isSealed = false;
+        this.sold = false;
+        this.likesCount = 0L;
     }
 
     public Long getId() {
@@ -113,12 +128,12 @@ public class Product implements Serializable {
         this.category = category;
     }
 
-    public boolean isSealed() {
-        return isSealed;
+    public boolean isSold() {
+        return sold;
     }
 
-    public void setSealed(boolean sealed) {
-        isSealed = sealed;
+    public void setSold(boolean sold) {
+        this.sold = sold;
     }
 
     public Currency getCurrency() {
@@ -149,11 +164,11 @@ public class Product implements Serializable {
         return createdDate;
     }
 
-    public View getView() {
+    public List<View> getView() {
         return view;
     }
 
-    public void setView(View view) {
+    public void setView(List<View> view) {
         this.view = view;
     }
 
@@ -163,5 +178,56 @@ public class Product implements Serializable {
 
     public void setViewCount(Long viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    @Nullable
+    public List<ProductLikes> getProductLikes() {
+        return productLikes;
+    }
+
+    public void setProductLikes(@Nullable List<ProductLikes> productLikes) {
+        this.productLikes = productLikes;
+    }
+
+    @Nullable
+    public List<byte[]> getImagesByte() {
+        return imagesByte;
+    }
+
+    public void setImagesByte(@Nullable List<byte[]> imagesByte) {
+        this.imagesByte = imagesByte;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Long getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(Long likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    @Nullable
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(@Nullable List<Message> messages) {
+        this.messages = messages;
     }
 }

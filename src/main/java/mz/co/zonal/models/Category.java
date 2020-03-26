@@ -1,30 +1,31 @@
 package mz.co.zonal.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Category implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String name;
+    @NotNull
     private String imagePath;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+    @OneToMany(cascade = CascadeType.REMOVE,
     mappedBy = "category")
-    private Product product;
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Brand> brands;
+    private List<Product> product;
+    @Nullable
+    private byte[] categoryImage;
 
     public Category() {
     }
@@ -32,6 +33,14 @@ public class Category implements Serializable {
     public Category(String name, String imagePath) {
         this.name = name;
         this.imagePath = imagePath;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -50,27 +59,15 @@ public class Category implements Serializable {
         this.imagePath = imagePath;
     }
 
-    public Product getProduct() {
+    public List<Product> getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public byte[] getCategoryImage() {
+        return categoryImage;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Set<Brand> getBrands() {
-        return brands;
-    }
-
-    public void setBrands(Set<Brand> brands) {
-        this.brands = brands;
+    public void setCategoryImage(byte[] categoryImage) {
+        this.categoryImage = categoryImage;
     }
 }

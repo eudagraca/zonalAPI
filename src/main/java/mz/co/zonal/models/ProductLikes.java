@@ -3,10 +3,9 @@ package mz.co.zonal.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
-public class View implements Serializable {
+public class ProductLikes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,10 +17,16 @@ public class View implements Serializable {
     @JsonIgnore
     private Product product;
 
-    public View() {
+    @Override
+    public String toString() {
+        return "ProductLikes{"+" product=" + product.getId() +
+                '}';
     }
 
-    public View(User user, Product product) {
+    public ProductLikes() {
+    }
+
+    public ProductLikes(User user, Product product) {
         this.user = user;
         this.product = product;
     }

@@ -1,26 +1,31 @@
 package mz.co.zonal.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Currency{
+public class Currency implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Qual é o simbolo da moeda?")
+    @NotNull
     private String code;
-    @NotBlank(message = "Nome moeda é obrigatório")
+    @NotNull
     private String currency;
-    @NotBlank(message = "Região da moeda é obrigatória")
+    @NotNull
     private String region_country;
-    @OneToOne(mappedBy = "currency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private Product product;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToMany(mappedBy = "currency", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Product> products;
 
     public Currency() {
     }
@@ -66,12 +71,12 @@ public class Currency{
         this.region_country = region_country;
     }
 
-    public Product getProduct() {
-        return product;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     @Override

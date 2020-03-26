@@ -1,8 +1,8 @@
 package mz.co.zonal.repository;
 
 import mz.co.zonal.models.Category;
+import mz.co.zonal.models.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Category findCategoryById(Long id);
+public interface TypeRepository extends JpaRepository<Type, Long> {
 }
