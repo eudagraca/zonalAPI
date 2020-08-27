@@ -1,8 +1,6 @@
 package mz.co.zonal.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.lang.Nullable;
 
@@ -41,9 +39,10 @@ public class Product implements Serializable {
             cascade = CascadeType.REMOVE,
             mappedBy = "product")
     private List<View> view;
-    @Nullable
-    @OneToMany(cascade = CascadeType.REMOVE,
+
+    @OneToMany(cascade = CascadeType.DETACH,
             mappedBy = "product")
+    @OrderBy(value = "timeSent ASC")
     private List<Message> messages;
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name="type_id")
@@ -56,9 +55,7 @@ public class Product implements Serializable {
     @OneToMany(mappedBy = "product",
             cascade = CascadeType.REMOVE)
     private List<ProductLikes> productLikes;
-    @Nullable
-    @Column
-    @ElementCollection(targetClass=byte.class)
+    @Transient
     private List<byte[]> imagesByte;
     private Long likesCount;
 
@@ -68,7 +65,7 @@ public class Product implements Serializable {
     public Product(@NotNull String title, @NotNull String description,
                    @NotNull double price, Category category,
                    Currency currency, User user,
-                   Type type) {
+                   Type type, List<Images> images) {
         this.title = title;
         this.description = description;
         this.price = price;
@@ -78,6 +75,7 @@ public class Product implements Serializable {
         this.type = type;
         this.sold = false;
         this.likesCount = 0L;
+        this.images = images;
     }
 
     public Long getId() {
@@ -158,10 +156,6 @@ public class Product implements Serializable {
 
     public void setImages(List<Images> images) {
         this.images = images;
-    }
-
-    public Date getCreateAt() {
-        return createdDate;
     }
 
     public List<View> getView() {

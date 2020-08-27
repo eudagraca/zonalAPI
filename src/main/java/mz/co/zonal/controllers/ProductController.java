@@ -1,5 +1,6 @@
 package mz.co.zonal.controllers;
 
+import mz.co.zonal.errors.ResourceNotFoundException;
 import mz.co.zonal.models.Images;
 import mz.co.zonal.models.Message;
 import mz.co.zonal.models.Product;
@@ -10,6 +11,8 @@ import mz.co.zonal.utils.Disk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,34 +45,61 @@ public class ProductController {
         return convertImages(productList);
     }
 
+    @GetMapping("all")
+    private List<Product> allProduct() {
+        var productList = service.allProducts();
+        return productList;
+    }
+
     @GetMapping(path = "{id}")
-    private Product product(@PathVariable("id") Long id) {
+    private ResponseEntity<Product> product(@PathVariable("id") Long id) {
+
         var product = service.findOne(id);
-        return convertSingleProductImages(product);
+        if (product != null) {
+            return  ResponseEntity.status(HttpStatus.OK).body(convertSingleProductImages(product));
+        }else {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new Product());
+        }
     }
 
     @GetMapping(path = "user/{userId}")
     private ArrayList<Product> productsByUser(@PathVariable("userId") Long userId) {
-        var products = service.findByUserIdAndSoldFalse(userId);
-        return convertImages(products);
+            var products = service.findByUserIdAndSoldFalse(userId);
+            if (!products.isEmpty()){
+                return convertImages(products);
+            }else {
+                return (ArrayList<Product>) products;
+            }
     }
 
     @GetMapping(path = "category/{categoryId}")
     private List<Product> productByCategory(@PathVariable("categoryId") Long categoryId) {
-        var products = service.findProductsByCategoryId(categoryId);
-        return convertImages(products);
+        try {
+            var products = service.findProductsByCategoryId(categoryId);
+            return convertImages(products);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage());
+        }
     }
 
     @GetMapping(path = "search/{title}")
     private List<Product> findProductByName(@PathVariable("title") String title) {
-        var productList = service.findByNameLike(title);
-        return convertImages(productList);
+        try {
+            var productList = service.findByNameLike(title);
+            return convertImages(productList);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage());
+        }
     }
 
     @GetMapping(path = "search/type/{id}")
     private List<Product> findProductType(@PathVariable("id") Long id) {
-        var products = service.findByType(id);
-        return convertImages(products);
+        try {
+            var products = service.findByType(id);
+            return convertImages(products);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage());
+        }
     }
 
     @GetMapping(path = "brand/{id}")
@@ -92,6 +122,16 @@ public class ProductController {
     private List<Product> productsSoldByUser(@PathVariable("userId") Long userId) {
         var products = service.findByUserIdAndSoldTrue(userId);
         return convertImages(products);
+    }
+
+    @GetMapping(path = "sold/count/{userId}")
+    private Long countSold(@PathVariable("userId") Long userId) {
+        return service.countByUserIdAndSoldTrue(userId);
+    }
+
+    @GetMapping(path = "selling/count/{userId}")
+    private Long countSelling(@PathVariable("userId") Long userId) {
+        return service.countByUserIdAndSoldFalse(userId);
     }
     /*
       Filters
@@ -194,7 +234,9 @@ public class ProductController {
         var product = service.findOne(productId);
         var user = userService.userByID(userId);
         var messages = new ArrayList<Message>();
-        if (product.getMessages().size() > 0) {
+        if(product == null){
+        }
+        else if (product.getMessages().size() > 0) {
             for (Message message : product.getMessages()) {
                 if (message.getSender().getId().equals(user.getId()) || message.getReceiver().getId().equals(user.getId())) {
                     messages.add(message);
@@ -235,18 +277,21 @@ public class ProductController {
      */
 
     @Transactional
-    private void deleteProductImage(List<Images> imageList) {
+    void deleteProductImage(List<Images> imageList, Long id) {
+        System.out.println(id+"\n");
         try {
-            for (Images image : imageList) {
-                File file = new File(image.getImagePath());
-                if (file.delete()) {
-                    System.out.println(file.getName() + " is deleted!");
-                } else {
-                    System.out.println("Delete operation is failed.");
+            if (imagesService.deleteImages(id) == 1) {
+                for (Images image : imageList) {
+                    File file = new File(image.getImagePath());
+                    if (file.delete()) {
+                        System.out.println(file.getName() + " is deleted!");
+                    } else {
+                        System.out.println("Delete operation is failed.");
+                    }
                 }
             }
         } catch (Exception e) {
-            System.out.println("Failed to Delete image !!");
+            System.out.println("Failed to Delete image !!   "+e);
         }
     }
 
@@ -259,7 +304,7 @@ public class ProductController {
         try {
             var product = service.findOne(id);
             if (service.delete(id) == 1) {
-                deleteProductImage(product.getImages());
+                deleteProductImage(product.getImages(), id);
             }
             return 1;
         } catch (Exception e) {
@@ -283,7 +328,7 @@ public class ProductController {
         var product = service.findOne(id);
 
         if (product.getImages() != null && product.getImages().size() > 0) {
-            deleteProductImage(product.getImages());
+            deleteProductImage(product.getImages(), id);
         }
         String fileName;
         try {
@@ -305,7 +350,6 @@ public class ProductController {
         }
         return false;
     }
-
 
     /**
      * Put

@@ -32,7 +32,7 @@ public class User implements UserDetails, Serializable {
     @NotEmpty
     @Size(min = 5)
     private String password;
-    private Date createAt = new Date();
+    private  Date createAt;
     @Nullable
     private String picPath;
     @Nullable
@@ -81,6 +81,7 @@ public class User implements UserDetails, Serializable {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        createAt = new Date();
     }
 
     public User(Double latitude, Double longitude) {
@@ -120,6 +121,7 @@ public class User implements UserDetails, Serializable {
         this.fullName = fullName;
     }
 
+    @JsonIgnore
     public String getEmail() {
         return email;
     }
@@ -146,7 +148,7 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends  GrantedAuthority>) this.roles;
+        return this.roles;
     }
 
     public String getPassword() {

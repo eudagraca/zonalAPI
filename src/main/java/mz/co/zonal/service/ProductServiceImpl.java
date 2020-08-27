@@ -53,4 +53,8 @@ public interface ProductServiceImpl {
     List<Product> findByCategoryIdAndTypeId(Long categoryId, Long typeId);
 
     int sold(Long id);
+
+    Long countByUserIdAndSoldTrue(Long userId);
+
+    Long countByUserIdAndSoldFalse(Long userId);
 }

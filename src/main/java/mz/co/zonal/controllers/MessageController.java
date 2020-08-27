@@ -6,10 +6,7 @@ import mz.co.zonal.service.MessagesService;
 import mz.co.zonal.service.ProductService;
 import mz.co.zonal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -17,15 +14,19 @@ import java.util.HashMap;
 @RequestMapping("/rest/v01/messages/")
 public class MessageController {
 
-    @Autowired
-    private MessagesService service;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ProductService productService;
+    private final MessagesService service;
+    private final UserService userService;
+    private final ProductService productService;
+
+    public MessageController(MessagesService service, UserService userService, ProductService productService) {
+        this.service = service;
+        this.userService = userService;
+        this.productService = productService;
+    }
 
     @PostMapping(value = "send")
     private Message sendMessage(@RequestBody HashMap<String, String> map) {
+        System.out.println(map);
         var message = new Message(userService.userByID(Long.parseLong(map.get("sender"))),
                 userService.userByID(Long.parseLong(map.get("receiver"))),
                 productService.findOne(Long.parseLong(map.get("product"))),
@@ -33,5 +34,8 @@ public class MessageController {
         return service.sendMessage(message);
     }
 
-//    private
+    @GetMapping(value = "history/{productId}/{userId}/{senderId}")
+    private int fetchHistory(@PathVariable("productId") Long productId, @PathVariable("userId") Long userId, @PathVariable("senderId") Long senderId ){
+        return service.fetchHistory(productId, senderId, userId);
+    }
 }

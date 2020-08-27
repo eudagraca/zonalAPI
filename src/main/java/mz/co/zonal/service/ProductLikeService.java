@@ -1,11 +1,14 @@
 package mz.co.zonal.service;
 
+import mz.co.zonal.models.Product;
 import mz.co.zonal.models.ProductLikes;
 import mz.co.zonal.repository.LikeRepository;
 import mz.co.zonal.repository.ProductRepository;
 import mz.co.zonal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 public class ProductLikeService implements ProductLikeServiceImpl{
@@ -37,5 +40,15 @@ public class ProductLikeService implements ProductLikeServiceImpl{
             repository.deleteByProductIdAndUserId(productId, userId);
             return false;
         }
+    }
+
+    @Override
+    public ArrayList<Product> productLiked(Long userId) {
+        var productsList = repository.findByUserId(userId);
+        var products = new ArrayList<Product>();
+        for (var product: productsList) {
+            products.add(product.getProduct());
+        }
+        return products;
     }
 }

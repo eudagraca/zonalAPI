@@ -11,9 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.activation.FileTypeMap;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,8 +35,14 @@ public class UserController {
     }
 
     @PostMapping(value = "signUp")
-    private User signUp(@Valid @RequestBody User user) {
-        return userService.signUp(user);
+    private ResponseEntity<User> signUp(@Valid @RequestBody User user) {
+        if (userService.userPhone(user.getPhoneNumber()) != null){
+            return new ResponseEntity<>(new User(), null, HttpStatus.ACCEPTED);
+        }else if (userService.findByEmail(user.getEmail()) != null){
+            return new ResponseEntity<>(new User(), null, HttpStatus.CONFLICT);
+        }else {
+            return new ResponseEntity<>(userService.signUp(user), null, HttpStatus.CREATED);
+        }
     }
 
     @DeleteMapping(path = "{id}")
@@ -61,15 +65,14 @@ public class UserController {
     @GetMapping(value = "/photo/{userId}")
     public ResponseEntity<byte[]> getUserPhoto(@PathVariable Long userId) throws IOException {
         var user = userService.userByID(userId);
-        System.out.println(user.getPicPath());
-        File f = new File(user.getPicPath());
-        var imagem = Files.readAllBytes(f.toPath());
+//        File f = new File(user.getPicPath());
+//        var imagem = Files.readAllBytes(f.toPath());
 //        return ResponseEntity.ok().contentType(MediaType.parseMediaType(imagem.)).body(imagem);
         byte[] data = new byte[0];
         try {
             assert user.getPicPath() != null;
             if
-            (!user.getPicPath().isEmpty()) {
+            (user.getPicPath() != null) {
                 String picPath = user.getPicPath();
                 Path path = Paths.get(picPath);
                 data = Files.readAllBytes(path);

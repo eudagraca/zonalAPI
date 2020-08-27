@@ -26,7 +26,7 @@ public class ProductService implements ProductServiceImpl {
 
     @Override
     public Product findOne(Long id) {
-        return repository.getOne(id);
+        return repository.findOneById(id);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ProductService implements ProductServiceImpl {
 
     @Override
     public List<Product> findProductsByCategoryId(Long categoryId) {
-        return repository.findByCategoryId(categoryId);
+        return repository.findByCategoryIdAndSoldFalse(categoryId);
     }
 
     @Override
@@ -68,6 +68,16 @@ public class ProductService implements ProductServiceImpl {
     @Override
     public int sold(Long id) {
         return repository.sold(true, id);
+    }
+
+    @Override
+    public Long countByUserIdAndSoldTrue(Long userId) {
+        return repository.countByUserIdAndSoldTrue(userId);
+    }
+
+    @Override
+    public Long countByUserIdAndSoldFalse(Long userId) {
+        return repository.countByUserIdAndSoldFalse(userId);
     }
 
     @Override
@@ -121,7 +131,7 @@ public class ProductService implements ProductServiceImpl {
 
     @Override
     public List<Product> findByCategoryId(Long id) {
-        return repository.findByCategoryId(id);
+        return repository.findByCategoryIdAndSoldFalse(id);
     }
 
     @Override

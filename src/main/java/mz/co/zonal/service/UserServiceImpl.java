@@ -7,6 +7,9 @@ import java.util.ArrayList;
 public interface UserServiceImpl {
     ArrayList<User> allUsers();
     User userByID(Long id);
+    User userPhone(int phone);
+
+    User findByEmail(String phone);
     User signUp(User user);
     boolean deleteUser(Long id);
     boolean updateUser(User user);

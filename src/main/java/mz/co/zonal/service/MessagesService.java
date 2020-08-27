@@ -23,4 +23,14 @@ public class MessagesService implements MessagesImpl {
     public Message sendMessage(Message message) {
         return repository.save(message);
     }
+
+    public int fetchHistory(Long productId, Long senderId, Long receiverId) {
+        var value =  repository.countByProductIdAndSenderIdAndReceiverId(
+                productId, senderId, receiverId);
+
+        var valueTwo = repository.countByProductIdAndReceiverIdAndSenderId(
+                productId, senderId, receiverId);
+
+        return  value + valueTwo;
+    }
 }

@@ -4,6 +4,8 @@ import mz.co.zonal.models.Brand;
 import mz.co.zonal.service.BrandService;
 import mz.co.zonal.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,8 +30,8 @@ public class BrandController {
     }
 
     @GetMapping
-    private ArrayList<Brand> allBrands(){
-        return new ArrayList<>(service.allBrands());
+    private ResponseEntity<ArrayList<Brand>> allBrands(){
+        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>(service.allBrands()));
     }
 
     @PostMapping(value = "admin/save")

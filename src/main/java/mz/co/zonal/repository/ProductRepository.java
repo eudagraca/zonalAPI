@@ -27,9 +27,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     ArrayList<Product> findByUserIdAndSoldTrue(Long id);
 
+    Long countByUserIdAndSoldTrue(Long userId);
+
+    Long countByUserIdAndSoldFalse(Long userId);
+
     ArrayList<Product> findByUserId(Long id);
 
-    ArrayList<Product> findByCategoryId(Long categoryId);
+    ArrayList<Product> findByCategoryIdAndSoldFalse(Long categoryId);
 
     ArrayList<Product> findByTitleContainingOrderByCreatedDateAsc(String name);
 

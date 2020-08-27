@@ -29,6 +29,16 @@ public class UserService implements UserServiceImpl {
     }
 
     @Override
+    public User userPhone(int phone) {
+        return repository.findByPhoneNumber(phone);
+    }
+
+    @Override
+    public User findByEmail(String mail) {
+        return repository.findByEmail(mail);
+    }
+
+    @Override
     public User signUp(@Valid User user) {
         return repository.save(user);
     }
@@ -66,12 +76,12 @@ public class UserService implements UserServiceImpl {
         User userInDataBase = repository.findByEmail(user.getEmail());
 
         if (user == null || userInDataBase == null) {
-            return null;
+            return new User();
         }
 
         return userInDataBase.getEmail().equals(user.getEmail())
                 && userInDataBase.getPassword().equals(user.getPassword())
-                ? userInDataBase : null;
+                ? userInDataBase : new User();
     }
 
     @Override

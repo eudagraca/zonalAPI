@@ -13,8 +13,11 @@ import java.util.Optional;
 @RequestMapping("/rest/v01/currency/")
 public class CurrencyController {
 
-    @Autowired
-    private CurrencyService currencyService;
+    private final CurrencyService currencyService;
+
+    public CurrencyController(CurrencyService currencyService) {
+        this.currencyService = currencyService;
+    }
 
     @GetMapping
     private ArrayList<Currency> allCurrency(){
